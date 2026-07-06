@@ -38,13 +38,15 @@ export default async function handler(req: any, res: any) {
     return res.status(400).json({ error: 'Invalid history data' });
   }
 
-  // Models configurable via OPEN_ROUTE_MODELS or GROQ_MODELS environment variables
-  const models = process.env.OPEN_ROUTE_MODELS
-    ? process.env.OPEN_ROUTE_MODELS.split(',').map((s) => s.trim()).filter(Boolean)
+  const usingOpenRoute = Boolean(process.env.OPEN_ROUTE_API_KEY || process.env.OPENAI_API_KEY);
+  const models = usingOpenRoute
+    ? process.env.OPEN_ROUTE_MODELS
+      ? process.env.OPEN_ROUTE_MODELS.split(',').map((s) => s.trim()).filter(Boolean)
+      : process.env.OPEN_ROUTE_MODEL
+      ? [process.env.OPEN_ROUTE_MODEL.trim()]
+      : ['poolside/laguna-xs-2.1:free']
     : process.env.GROQ_MODELS
     ? process.env.GROQ_MODELS.split(',').map((s) => s.trim()).filter(Boolean)
-    : process.env.OPEN_ROUTE_API_KEY || process.env.OPENAI_API_KEY
-    ? ['poolside/laguna-xs-2.1:free']
     : ['qwen/qwen3-32b', 'llama-3.3-70b-versatile', 'groq/compound-mini'];
 
   try {

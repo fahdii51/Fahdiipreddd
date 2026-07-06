@@ -37,12 +37,15 @@ export default async function handler(req: any, res: any) {
 
   try {
     const client = getAiClient();
-    const chatModel = process.env.OPEN_ROUTE_MODEL
+    const usingOpenRoute = Boolean(process.env.OPEN_ROUTE_API_KEY || process.env.OPENAI_API_KEY);
+    const chatModel = usingOpenRoute
       ? process.env.OPEN_ROUTE_MODEL
+        ? process.env.OPEN_ROUTE_MODEL.trim()
+        : process.env.OPEN_ROUTE_MODELS
+        ? process.env.OPEN_ROUTE_MODELS.split(',')[0].trim()
+        : 'poolside/laguna-xs-2.1:free'
       : process.env.GROQ_MODELS
       ? process.env.GROQ_MODELS.split(',')[0].trim()
-      : process.env.OPEN_ROUTE_API_KEY || process.env.OPENAI_API_KEY
-      ? 'poolside/laguna-xs-2.1:free'
       : 'llama-3.3-70b-versatile';
     const completion = await client.chat.completions.create({
       model: chatModel,
