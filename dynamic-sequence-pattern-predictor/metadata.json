@@ -1,0 +1,6 @@
+{
+  "name": "Enhanced Pattern Predictor",
+  "description": "An AI-powered Wingo session log analyzer using a multi-model ensemble (Qwen, Llama, Groq) with consensus voting and individual model breakdowns.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
