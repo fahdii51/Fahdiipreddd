@@ -40,13 +40,14 @@ async function startServer() {
       return res.json(predictionCache.get(cacheKey));
     }
     
-    // Ensemble Models
-    const models = [
-      "qwen/qwen3-32b",
-      "llama-3.3-70b-versatile",
-      "llama-3.1-8b-instant",
-      "groq/compound-mini"
-    ];
+    // Ensemble Models (configurable via env var `GROQ_MODELS`, comma-separated)
+    const models = process.env.GROQ_MODELS
+      ? process.env.GROQ_MODELS.split(',').map(s => s.trim()).filter(Boolean)
+      : [
+          "qwen/qwen3-32b",
+          "llama-3.3-70b-versatile",
+          "groq/compound-mini"
+        ];
 
     try {
       const client = getGroqClient();
