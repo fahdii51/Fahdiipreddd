@@ -15,6 +15,8 @@ View your app in AI Studio: https://ai.studio/apps/0c17ae7e-6684-465f-8264-c8c72
 
 1. Install dependencies:
    `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+2. Set the `GROQ_API_KEY` or `OPEN_ROUTE_API_KEY` / `OPENAI_API_KEY` in [.env.local](.env.local)
+   - For OpenAI route use: `OPEN_ROUTE_API_KEY=sk-or-v1-...`
+   - Use `OPEN_ROUTE_MODEL=poolside/laguna-xs-2.1:free` to target the route model
 3. Run the app:
    `npm run dev`

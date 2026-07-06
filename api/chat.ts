@@ -1,7 +1,9 @@
 import 'dotenv/config';
 import Groq from 'groq-sdk';
+import OpenAI from 'openai';
 
 let groqClient: Groq | null = null;
+let openAiClient: OpenAI | null = null;
 
 function getGroqClient() {
   if (!groqClient) {
@@ -12,15 +14,38 @@ function getGroqClient() {
   return groqClient;
 }
 
+function getOpenAiClient() {
+  if (!openAiClient) {
+    const apiKey = process.env.OPEN_ROUTE_API_KEY || process.env.OPENAI_API_KEY;
+    if (!apiKey) throw new Error('OPEN_ROUTE_API_KEY or OPENAI_API_KEY is not configured');
+    openAiClient = new OpenAI({ apiKey });
+  }
+  return openAiClient;
+}
+
+function getAiClient() {
+  if (process.env.OPEN_ROUTE_API_KEY || process.env.OPENAI_API_KEY) {
+    return getOpenAiClient();
+  }
+  return getGroqClient();
+}
+
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
 
   const { messages } = req.body || {};
 
   try {
-    const client = getGroqClient();
+    const client = getAiClient();
+    const chatModel = process.env.OPEN_ROUTE_MODEL
+      ? process.env.OPEN_ROUTE_MODEL
+      : process.env.GROQ_MODELS
+      ? process.env.GROQ_MODELS.split(',')[0].trim()
+      : process.env.OPEN_ROUTE_API_KEY || process.env.OPENAI_API_KEY
+      ? 'poolside/laguna-xs-2.1:free'
+      : 'llama-3.3-70b-versatile';
     const completion = await client.chat.completions.create({
-      model: process.env.GROQ_MODELS ? process.env.GROQ_MODELS.split(',')[0].trim() : 'llama-3.3-70b-versatile',
+      model: chatModel,
       messages: messages || [{ role: 'user', content: 'Hi' }],
       max_tokens: 2048,
       temperature: 0.6,

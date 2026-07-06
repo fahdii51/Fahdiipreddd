@@ -2,8 +2,9 @@ Vercel Deployment
 -----------------
 
 1. Set environment variables in the Vercel dashboard:
-   - `GROQ_API_KEY` (your Groq API key)
-   - `GROQ_MODELS` (comma-separated list of models, e.g. `qwen/qwen3-32b,llama-3.3-70b-versatile,groq/compound-mini`)
+   - `GROQ_API_KEY` (your Groq API key) or `OPEN_ROUTE_API_KEY` / `OPENAI_API_KEY` (your OpenAI route key)
+   - `GROQ_MODELS` or `OPEN_ROUTE_MODELS` (comma-separated list of models, e.g. `poolside/laguna-xs-2.1:free`)
+   - Optionally `OPEN_ROUTE_MODEL` for the chat route model
 
 2. Build & deploy
 

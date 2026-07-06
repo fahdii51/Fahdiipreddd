@@ -1,7 +1,9 @@
 import 'dotenv/config';
 import Groq from 'groq-sdk';
+import OpenAI from 'openai';
 
 let groqClient: Groq | null = null;
+let openAiClient: OpenAI | null = null;
 
 function getGroqClient() {
   if (!groqClient) {
@@ -12,6 +14,22 @@ function getGroqClient() {
   return groqClient;
 }
 
+function getOpenAiClient() {
+  if (!openAiClient) {
+    const apiKey = process.env.OPEN_ROUTE_API_KEY || process.env.OPENAI_API_KEY;
+    if (!apiKey) throw new Error('OPEN_ROUTE_API_KEY or OPENAI_API_KEY is not configured');
+    openAiClient = new OpenAI({ apiKey });
+  }
+  return openAiClient;
+}
+
+function getAiClient() {
+  if (process.env.OPEN_ROUTE_API_KEY || process.env.OPENAI_API_KEY) {
+    return getOpenAiClient();
+  }
+  return getGroqClient();
+}
+
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
 
@@ -20,13 +38,17 @@ export default async function handler(req: any, res: any) {
     return res.status(400).json({ error: 'Invalid history data' });
   }
 
-  // Models configurable via GROQ_MODELS environment variable
-  const models = process.env.GROQ_MODELS
+  // Models configurable via OPEN_ROUTE_MODELS or GROQ_MODELS environment variables
+  const models = process.env.OPEN_ROUTE_MODELS
+    ? process.env.OPEN_ROUTE_MODELS.split(',').map((s) => s.trim()).filter(Boolean)
+    : process.env.GROQ_MODELS
     ? process.env.GROQ_MODELS.split(',').map((s) => s.trim()).filter(Boolean)
+    : process.env.OPEN_ROUTE_API_KEY || process.env.OPENAI_API_KEY
+    ? ['poolside/laguna-xs-2.1:free']
     : ['qwen/qwen3-32b', 'llama-3.3-70b-versatile', 'groq/compound-mini'];
 
   try {
-    const client = getGroqClient();
+    const client = getAiClient();
 
     const requests = models.map((model) =>
       client.chat.completions.create({

@@ -3,8 +3,10 @@ import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import Groq from "groq-sdk";
+import OpenAI from "openai";
 
 let groqClient: Groq | null = null;
+let openAiClient: OpenAI | null = null;
 
 function getGroqClient() {
   if (!groqClient) {
@@ -17,6 +19,24 @@ function getGroqClient() {
     });
   }
   return groqClient;
+}
+
+function getOpenAiClient() {
+  if (!openAiClient) {
+    const apiKey = process.env.OPEN_ROUTE_API_KEY || process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      throw new Error("OPEN_ROUTE_API_KEY or OPENAI_API_KEY is not configured");
+    }
+    openAiClient = new OpenAI({ apiKey });
+  }
+  return openAiClient;
+}
+
+function getAiClient() {
+  if (process.env.OPEN_ROUTE_API_KEY || process.env.OPENAI_API_KEY) {
+    return getOpenAiClient();
+  }
+  return getGroqClient();
 }
 
 async function startServer() {
@@ -41,9 +61,13 @@ async function startServer() {
       return res.json(predictionCache.get(cacheKey));
     }
     
-    // Ensemble Models (configurable via env var `GROQ_MODELS`, comma-separated)
-    const models = process.env.GROQ_MODELS
+    // Ensemble Models (configurable via env var `OPEN_ROUTE_MODELS` or `GROQ_MODELS`, comma-separated)
+    const models = process.env.OPEN_ROUTE_MODELS
+      ? process.env.OPEN_ROUTE_MODELS.split(',').map(s => s.trim()).filter(Boolean)
+      : process.env.GROQ_MODELS
       ? process.env.GROQ_MODELS.split(',').map(s => s.trim()).filter(Boolean)
+      : process.env.OPEN_ROUTE_API_KEY || process.env.OPENAI_API_KEY
+      ? ["poolside/laguna-xs-2.1:free"]
       : [
           "qwen/qwen3-32b",
           "llama-3.3-70b-versatile",
@@ -51,7 +75,7 @@ async function startServer() {
         ];
 
     try {
-      const client = getGroqClient();
+      const client = getAiClient();
       
       // Request predictions from all models in parallel
       const requests = models.map(model => 
@@ -155,9 +179,16 @@ async function startServer() {
     const { messages } = req.body;
     
     try {
-      const client = getGroqClient();
+      const client = getAiClient();
+      const chatModel = process.env.OPEN_ROUTE_MODEL
+        ? process.env.OPEN_ROUTE_MODEL
+        : process.env.GROQ_MODELS
+        ? process.env.GROQ_MODELS.split(',')[0].trim()
+        : process.env.OPEN_ROUTE_API_KEY || process.env.OPENAI_API_KEY
+        ? "poolside/laguna-xs-2.1:free"
+        : "llama-3.3-70b-versatile";
       const completion = await client.chat.completions.create({
-        model: "llama-3.3-70b-versatile",
+        model: chatModel,
         messages: messages || [{ role: "user", content: "Hi" }],
         max_tokens: 2048,
         temperature: 0.60,
