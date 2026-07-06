@@ -1,0 +1,2129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>fahdii→ · WINGO · SPLIT AI PRO v3.0</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: #0a0c14;
+      color: #e8edf5;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    :root {
+      --bg-primary: #0a0c14;
+      --bg-card: #0f1320;
+      --border-dim: #1a2240;
+      --gold: #fbbf24;
+      --green: #4ade80;
+      --red: #f87171;
+      --blue: #3b82f6;
+      --purple: #a855f7;
+      --text-muted: #6a7a9a;
+      --text-light: #e8edf5;
+      --orange: #fb923c;
+      --cyan: #22d3ee;
+      --pink: #ec4899;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 50% 40% at 20% 20%, rgba(251, 191, 36, 0.02) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 80% 80%, rgba(168, 85, 247, 0.02) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #countryScreen, #pwScreen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-primary);
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    #pwScreen { z-index: 1000; }
+
+    .cs-logo, .pw-logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--gold), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 6px;
+      text-shadow: 0 0 40px rgba(251, 191, 36, 0.08);
+    }
+    .cs-sub, .pw-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 5px;
+      margin-top: 6px;
+      margin-bottom: 28px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border-dim);
+      padding-bottom: 12px;
+    }
+    .pw-box {
+      width: 100%;
+      max-width: 360px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-dim);
+      border-radius: 24px;
+      padding: 36px 28px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+    .pw-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+    .pw-input {
+      width: 100%;
+      background: #080a14;
+      border: 1px solid var(--border-dim);
+      border-radius: 40px;
+      padding: 14px 20px;
+      color: #f1f5f9;
+      font-family: 'Orbitron', monospace;
+      font-size: 16px;
+      letter-spacing: 5px;
+      outline: none;
+      transition: 0.3s;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    .pw-input:focus { border-color: var(--gold); box-shadow: 0 0 30px rgba(251, 191, 36, 0.05); }
+    .pw-err { font-size: 11px; color: var(--red); letter-spacing: 2px; min-height: 20px; text-align: center; margin-bottom: 10px; }
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 40px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+    }
+    .btn-glow {
+      background: linear-gradient(135deg, var(--gold), var(--purple));
+      color: #0a0c14;
+      box-shadow: 0 4px 20px rgba(168, 85, 247, 0.15);
+    }
+    .btn-glow:hover { box-shadow: 0 0 40px rgba(168, 85, 247, 0.25); transform: translateY(-2px); }
+
+    .countries-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      width: 100%;
+      max-width: 400px;
+    }
+    .country-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dim);
+      border-radius: 20px;
+      padding: 16px 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.25s ease;
+      position: relative;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+    .country-btn:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold);
+      background: #161d30;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.4);
+    }
+    .country-btn .flag { font-size: 28px; line-height: 1; }
+    .country-btn .info { text-align: left; }
+    .country-btn .cname { font-size: 14px; font-weight: 700; color: var(--text-light); letter-spacing: 1px; }
+    .country-btn .cgame { font-size: 10px; color: var(--text-muted); letter-spacing: 1px; }
+    .country-btn .badge {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      font-size: 9px;
+      color: var(--gold);
+      letter-spacing: 1px;
+      opacity: 0.5;
+      font-weight: 600;
+    }
+
+    #mainApp {
+      display: none;
+      position: relative;
+      z-index: 1;
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 0 12px 24px;
+    }
+
+    .header {
+      background: rgba(10, 12, 20, 0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-dim);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      margin-bottom: 16px;
+    }
+    .h-logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 16px;
+      font-weight: 900;
+      background: linear-gradient(90deg, var(--gold), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 4px;
+    }
+    .h-country {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-dim);
+      border-radius: 40px;
+      padding: 4px 14px 4px 10px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .h-country:hover { border-color: var(--gold); }
+    .h-country span { font-size: 18px; }
+    .h-country p { font-size: 10px; color: var(--text-muted); letter-spacing: 1px; font-weight: 600; }
+    .h-live {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      color: var(--green);
+      letter-spacing: 2px;
+      background: var(--bg-card);
+      padding: 4px 14px;
+      border-radius: 40px;
+      border: 1px solid var(--border-dim);
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: blink 0.9s infinite;
+      box-shadow: 0 0 12px rgba(74, 222, 128, 0.2);
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    .admin-dash {
+      background: var(--bg-card);
+      border-radius: 24px;
+      border: 1px solid var(--border-dim);
+      padding: 20px 18px 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .admin-dash::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0.3;
+    }
+    .dash-title {
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 14px;
+    }
+    .dash-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .dash-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .dash-value {
+      font-family: 'Orbitron', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-light);
+      letter-spacing: 1px;
+    }
+    .dash-value.gold { color: var(--gold); }
+    .dash-value.green { color: var(--green); }
+    .dash-value.red { color: var(--red); }
+    .dash-value.purple { color: var(--purple); }
+    .dash-value.orange { color: var(--orange); }
+    .dash-value.cyan { color: var(--cyan); }
+    .dash-value.pink { color: var(--pink); }
+    .dash-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-dim), transparent);
+      margin: 8px 0 14px;
+    }
+
+    #trendAlert {
+      display: none;
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-card);
+      border: 2px solid var(--orange);
+      border-radius: 16px;
+      padding: 16px 24px;
+      z-index: 1000;
+      box-shadow: 0 0 60px rgba(251, 146, 60, 0.15);
+      text-align: center;
+      max-width: 90%;
+      animation: slideDown 0.5s ease;
+      backdrop-filter: blur(20px);
+    }
+    #trendAlert.show { display: block; }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateX(-50%) translateY(-30px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    #trendAlert .alert-title {
+      font-size: 12px;
+      color: var(--orange);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    #trendAlert .alert-content {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 6px 0 4px;
+      color: var(--text-light);
+    }
+    #trendAlert .alert-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+    }
+    .alert-close {
+      position: absolute;
+      top: 6px;
+      right: 12px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .alert-close:hover { color: var(--text-light); }
+
+    .trend-chart {
+      background: var(--bg-card);
+      border-radius: 20px;
+      border: 1px solid var(--border-dim);
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .trend-chart .trend-change-indicator {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 12px;
+      border-radius: 40px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .trend-chart .trend-change-indicator.stable {
+      color: var(--text-muted);
+      border: 1px solid var(--border-dim);
+    }
+    .trend-chart .trend-change-indicator.changing {
+      color: var(--orange);
+      border: 1px solid var(--orange);
+      animation: pulse 1s infinite;
+    }
+    .trend-chart .trend-change-indicator.locked {
+      color: var(--purple);
+      border: 1px solid var(--purple);
+    }
+    .trend-title {
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .trend-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+    }
+    .trend-pill {
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      background: #080a14;
+      border: 1px solid var(--border-dim);
+      color: var(--text-muted);
+      transition: 0.3s;
+      text-transform: uppercase;
+      cursor: default;
+    }
+    .trend-pill.active-big {
+      border-color: var(--green);
+      color: var(--green);
+      background: rgba(74, 222, 128, 0.08);
+    }
+    .trend-pill.active-small {
+      border-color: var(--red);
+      color: var(--red);
+      background: rgba(248, 113, 113, 0.08);
+    }
+    .trend-pill.predicted {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(251, 191, 36, 0.08);
+      animation: pulse 1.5s infinite;
+    }
+    .trend-pill.alert-pulse {
+      animation: alertPulse 0.5s ease 3;
+    }
+    .trend-pill.structural-rule {
+      border-color: var(--cyan);
+      color: var(--cyan);
+      background: rgba(34, 211, 238, 0.06);
+    }
+    .trend-pill.locked {
+      border-color: var(--purple);
+      color: var(--purple);
+      background: rgba(168, 85, 247, 0.15);
+    }
+    .trend-pill.pattern-high {
+      border-color: var(--pink);
+      color: var(--pink);
+      background: rgba(236, 72, 153, 0.08);
+    }
+    @keyframes alertPulse {
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.2); background: rgba(251, 146, 60, 0.2); }
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+    .trend-history {
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-dim);
+      flex-wrap: wrap;
+    }
+    .trend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid var(--border-dim);
+      transition: 0.3s;
+    }
+    .trend-dot.big { background: var(--green); border-color: var(--green); }
+    .trend-dot.small { background: var(--red); border-color: var(--red); }
+    .trend-dot.pending { background: transparent; border-color: var(--border-dim); }
+    .trend-dot.locked { border-color: var(--purple); box-shadow: 0 0 8px rgba(168, 85, 247, 0.3); }
+    .trend-dot.pattern { border-color: var(--pink); box-shadow: 0 0 8px rgba(236, 72, 153, 0.2); }
+
+    .split-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .pred-card {
+      background: var(--bg-card);
+      border-radius: 20px;
+      border: 1px solid var(--border-dim);
+      padding: 16px 14px 14px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    .pred-card.number-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 20%;
+      right: 20%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--blue), transparent);
+      opacity: 0.2;
+    }
+    .pred-card.size-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 20%;
+      right: 20%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--purple), transparent);
+      opacity: 0.2;
+    }
+    .pred-card .card-label {
+      font-size: 9px;
+      color: var(--text-muted);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .pred-card .card-number {
+      font-family: 'Orbitron', monospace;
+      font-size: 36px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      color: var(--gold);
+      text-shadow: 0 0 30px rgba(251, 191, 36, 0.06);
+      line-height: 1.2;
+    }
+    .pred-card .card-number.trend-change {
+      animation: numberPulse 0.6s ease;
+    }
+    @keyframes numberPulse {
+      0%,100% { transform: scale(1); color: var(--gold); }
+      50% { transform: scale(1.3); color: var(--orange); }
+    }
+    .pred-card .card-number.locked-number {
+      color: var(--purple);
+      text-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
+    }
+    .pred-card .card-size {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      margin-top: 4px;
+    }
+    .pred-card .card-size.big { color: var(--green); }
+    .pred-card .card-size.small { color: var(--red); }
+    .pred-card .card-size.locked-size { color: var(--purple); }
+    .pred-card .card-status {
+      font-size: 9px;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-dim);
+    }
+    .pred-card .card-status.active { color: var(--green); }
+    .pred-card .card-status.inactive { color: var(--red); }
+    .pred-card .card-status.locked { color: var(--purple); }
+    .pred-card .card-mode {
+      font-size: 8px;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+      background: rgba(168, 85, 247, 0.06);
+      padding: 3px 12px;
+      border-radius: 40px;
+      border: 1px solid rgba(168, 85, 247, 0.06);
+      display: inline-block;
+      margin-top: 6px;
+    }
+    .pred-card .card-mode.active-mode {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(251, 191, 36, 0.06);
+    }
+    .pred-card .card-mode.locked-mode {
+      border-color: var(--purple);
+      color: var(--purple);
+      background: rgba(168, 85, 247, 0.1);
+    }
+    .pred-card .card-confidence {
+      font-size: 9px;
+      letter-spacing: 1px;
+      margin-top: 6px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      display: inline-block;
+    }
+    .pred-card .card-confidence.high {
+      color: var(--green);
+      border: 1px solid rgba(74, 222, 128, 0.2);
+      background: rgba(74, 222, 128, 0.06);
+    }
+    .pred-card .card-confidence.medium {
+      color: var(--gold);
+      border: 1px solid rgba(251, 191, 36, 0.2);
+      background: rgba(251, 191, 36, 0.06);
+    }
+    .pred-card .card-confidence.low {
+      color: var(--red);
+      border: 1px solid rgba(248, 113, 113, 0.2);
+      background: rgba(248, 113, 113, 0.06);
+    }
+    .pred-card .card-confidence.locked-conf {
+      color: var(--purple);
+      border: 1px solid rgba(168, 85, 247, 0.2);
+      background: rgba(168, 85, 247, 0.06);
+    }
+
+    .size-pills {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 12px 0 16px;
+    }
+    .size-pill {
+      padding: 8px 24px;
+      border-radius: 40px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      background: #080a14;
+      border: 1px solid var(--border-dim);
+      color: var(--text-muted);
+      transition: 0.3s;
+      text-transform: uppercase;
+    }
+    .size-pill.big.active {
+      background: rgba(74, 222, 128, 0.12);
+      border-color: var(--green);
+      color: var(--green);
+      box-shadow: 0 0 24px rgba(74, 222, 128, 0.06);
+    }
+    .size-pill.small.active {
+      background: rgba(248, 113, 113, 0.12);
+      border-color: var(--red);
+      color: var(--red);
+      box-shadow: 0 0 24px rgba(248, 113, 113, 0.06);
+    }
+    .size-pill.ai {
+      background: rgba(168, 85, 247, 0.08);
+      border-color: var(--purple);
+      color: var(--purple);
+      font-size: 11px;
+      padding: 8px 18px;
+      letter-spacing: 2px;
+      animation: pulse 2s infinite;
+    }
+    .size-pill.locked {
+      border-color: var(--purple);
+      color: var(--purple);
+      background: rgba(168, 85, 247, 0.15);
+    }
+
+    .history-card {
+      background: var(--bg-card);
+      border-radius: 24px;
+      border: 1px solid var(--border-dim);
+      padding: 18px 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+    .history-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .history-head h4 {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+    .history-head span {
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      background: #080a14;
+      padding: 2px 14px;
+      border-radius: 40px;
+      border: 1px solid var(--border-dim);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead tr { border-bottom: 1px solid var(--border-dim); }
+    th {
+      font-size: 9px;
+      color: var(--text-muted);
+      letter-spacing: 3px;
+      padding: 6px 4px;
+      text-align: center;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    td {
+      padding: 8px 4px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      border-bottom: 1px solid #111a2a;
+      color: var(--text-light);
+    }
+    .win { color: var(--green); }
+    .loss { color: var(--red); }
+    .jackpot { color: var(--gold); }
+    .trend-change-row { background: rgba(251, 146, 60, 0.05); }
+    .trend-change-row td { color: var(--orange); }
+    .locked-row { background: rgba(168, 85, 247, 0.05); }
+    .locked-row td { color: var(--purple); }
+    .pattern-row { background: rgba(236, 72, 153, 0.05); }
+    .pattern-row td { color: var(--pink); }
+
+    .empty-state {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      letter-spacing: 2px;
+      padding: 16px 0;
+    }
+
+    .admin-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold), var(--purple));
+      color: #0a0c14;
+      box-shadow: 0 4px 16px rgba(168, 85, 247, 0.12);
+    }
+    .btn-gold:hover {
+      box-shadow: 0 0 36px rgba(168, 85, 247, 0.2);
+      transform: translateY(-2px);
+    }
+    .btn-tg {
+      background: linear-gradient(135deg, #1a3a7a, #2a5aaa);
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(42, 90, 170, 0.12);
+    }
+    .btn-tg:hover {
+      box-shadow: 0 0 36px rgba(42, 90, 170, 0.2);
+      transform: translateY(-2px);
+    }
+    .btn-sm { padding: 12px; font-size: 13px; letter-spacing: 3px; }
+
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--border-dim); border-radius: 8px; }
+
+    .fade-in { animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    .shake { animation: shake 0.35s ease; }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+
+    @media (max-width: 480px) {
+      .cs-logo, .pw-logo { font-size: 22px; letter-spacing: 4px; }
+      .countries-grid { gap: 8px; }
+      .country-btn { padding: 12px 10px; }
+      .admin-dash { padding: 16px 14px; }
+      .split-container { gap: 8px; }
+      .pred-card .card-number { font-size: 28px; }
+      .header { padding: 10px 12px; }
+      .h-logo { font-size: 14px; }
+      #trendAlert .alert-content { font-size: 15px; }
+    }
+
+    .rule-display {
+      background: rgba(34, 211, 238, 0.04);
+      border: 1px solid rgba(34, 211, 238, 0.12);
+      border-radius: 12px;
+      padding: 8px 12px;
+      margin-top: 8px;
+      text-align: center;
+      font-size: 10px;
+      color: var(--cyan);
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+    .pattern-display {
+      background: rgba(168, 85, 247, 0.06);
+      border: 1px solid rgba(168, 85, 247, 0.15);
+      border-radius: 12px;
+      padding: 8px 12px;
+      margin-top: 6px;
+      text-align: center;
+      font-size: 11px;
+      color: var(--purple);
+      letter-spacing: 2px;
+      font-weight: 700;
+    }
+    .pattern-display.locked-pattern {
+      border-color: var(--pink);
+      color: var(--pink);
+      background: rgba(236, 72, 153, 0.06);
+    }
+    .confidence-bar {
+      margin-top: 8px;
+      height: 4px;
+      background: var(--border-dim);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .confidence-bar .fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+    .confidence-bar .fill.high { background: linear-gradient(90deg, var(--green), var(--gold)); }
+    .confidence-bar .fill.medium { background: linear-gradient(90deg, var(--gold), var(--orange)); }
+    .confidence-bar .fill.low { background: linear-gradient(90deg, var(--orange), var(--red)); }
+    .confidence-bar .fill.locked-fill { background: linear-gradient(90deg, var(--purple), var(--pink)); }
+
+    .prediction-meta {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 4px;
+      font-size: 8px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="pwScreen">
+    <div class="pw-logo">fahdii→</div>
+    <div class="pw-sub">VIP · WINGO · AI PRO v3.0</div>
+    <div class="pw-box">
+      <div class="pw-label">ENTER ACCESS KEY</div>
+      <input class="pw-input" id="pwInput" type="password" placeholder="••••••••••" maxlength="20" autofocus />
+      <div class="pw-err" id="pwErr"></div>
+      <button class="btn btn-glow" onclick="checkPw()">UNLOCK</button>
+    </div>
+  </div>
+
+  <div id="countryScreen" style="display:none;">
+    <div class="cs-logo">fahdii→</div>
+    <div class="cs-sub">V30 · WINGO · SELECT REGION</div>
+    <div class="countries-grid">
+      <div class="country-btn" onclick="selectCountry('in','🇮🇳','INDIA')">
+        <div class="flag">🇮🇳</div>
+        <div class="info"><div class="cname">INDIA</div><div class="cgame">WINGO · 1MIN</div></div>
+        <span class="badge">IN</span>
+      </div>
+      <div class="country-btn" onclick="selectCountry('bd','🇧🇩','BANGLADESH')">
+        <div class="flag">🇧🇩</div>
+        <div class="info"><div class="cname">BANGLADESH</div><div class="cgame">WINGO · 1MIN</div></div>
+        <span class="badge">BD</span>
+      </div>
+      <div class="country-btn" onclick="selectCountry('pk','🇵🇰','PAKISTAN')">
+        <div class="flag">🇵🇰</div>
+        <div class="info"><div class="cname">PAKISTAN</div><div class="cgame">WINGO · 1MIN</div></div>
+        <span class="badge">PK</span>
+      </div>
+      <div class="country-btn" onclick="selectCountry('np','🇳🇵','NEPAL')">
+        <div class="flag">🇳🇵</div>
+        <div class="info"><div class="cname">NEPAL</div><div class="cgame">WINGO · 1MIN</div></div>
+        <span class="badge">NP</span>
+      </div>
+      <div class="country-btn" onclick="selectCountry('lk','🇱🇰','SRI LANKA')">
+        <div class="flag">🇱🇰</div>
+        <div class="info"><div class="cname">SRI LANKA</div><div class="cgame">WINGO · 1MIN</div></div>
+        <span class="badge">LK</span>
+      </div>
+      <div class="country-btn" onclick="selectCountry('mm','🇲🇲','MYANMAR')">
+        <div class="flag">🇲🇲</div>
+        <div class="info"><div class="cname">MYANMAR</div><div class="cgame">WINGO · 1MIN</div></div>
+        <span class="badge">MM</span>
+      </div>
+      <div class="country-btn" onclick="selectCountry('ph','🇵🇭','PHILIPPINES')">
+        <div class="flag">🇵🇭</div>
+        <div class="info"><div class="cname">PHILIPPINES</div><div class="cgame">WINGO · 1MIN</div></div>
+        <span class="badge">PH</span>
+      </div>
+      <div class="country-btn" onclick="selectCountry('ng','🇳🇬','NIGERIA')">
+        <div class="flag">🇳🇬</div>
+        <div class="info"><div class="cname">NIGERIA</div><div class="cgame">WINGO · 1MIN</div></div>
+        <span class="badge">NG</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="mainApp">
+    <div class="header">
+      <div class="h-logo">FAHDII→</div>
+      <div class="h-country" onclick="goBack()">
+        <span id="hFlag">🌐</span>
+        <p id="hCountryName">GLOBAL</p>
+      </div>
+      <div class="h-live"><div class="live-dot"></div>LIVE</div>
+    </div>
+
+    <div id="trendAlert">
+      <button class="alert-close" onclick="closeAlert()">✕</button>
+      <div class="alert-title">🚨 PATTERN CHANGE DETECTED</div>
+      <div class="alert-content" id="alertContent">BIG → SMALL</div>
+      <div class="alert-sub" id="alertSub">Confidence: 75% · Pattern: Quadra Trend</div>
+    </div>
+
+    <div class="admin-dash fade-in">
+      <div class="dash-title">ADMIN · WINGO AI PRO v3.0</div>
+      <div class="dash-row">
+        <span class="dash-label">Active Period</span>
+        <span class="dash-value" id="periodDisplay">—</span>
+      </div>
+      <div class="dash-row">
+        <span class="dash-label">Active Mode</span>
+        <span class="dash-value purple" id="modeDisplay">NUMBER</span>
+      </div>
+      <div class="dash-row">
+        <span class="dash-label">Pattern Status</span>
+        <span class="dash-value pink" id="patternStatus">—</span>
+      </div>
+      <div class="dash-divider"></div>
+      <div class="size-pills">
+        <div class="size-pill big" id="pillBig">BIG</div>
+        <div class="size-pill small" id="pillSmall">SMALL</div>
+        <div class="size-pill ai">SPLIT AI</div>
+      </div>
+      <div class="dash-row">
+        <span class="dash-label">Win Rate</span>
+        <span class="dash-value gold" id="winRate">—</span>
+      </div>
+      <div class="dash-row" style="margin-bottom:0;">
+        <span class="dash-label">Timer</span>
+        <span class="dash-value gold" id="timerDisplay">00:00</span>
+      </div>
+    </div>
+
+    <div class="trend-chart fade-in" id="trendChart">
+      <div class="trend-title">📊 PATTERN DETECTION · LAST 6 PERIODS</div>
+      <div class="trend-pills" id="trendPills">
+        <span class="trend-pill">Loading...</span>
+      </div>
+      <div style="text-align:center;margin-top:10px;font-size:9px;color:var(--text-muted);letter-spacing:2px;">
+        <span id="trendName">—</span> · <span id="trendConfidence">—</span>
+        <span id="trendChangeIndicator" style="margin-left:12px;padding:2px 10px;border-radius:40px;font-size:8px;border:1px solid var(--border-dim);">● STABLE</span>
+      </div>
+      <div class="pattern-display" id="patternDisplay">Pattern: —</div>
+      <div class="confidence-bar" id="confidenceBar"><div class="fill" id="confidenceFill" style="width:0%"></div></div>
+      <div class="rule-display" id="ruleDisplayArea">Rule: —</div>
+      <div class="trend-history" id="trendHistory"></div>
+    </div>
+
+    <div class="split-container fade-in">
+      <div class="pred-card number-card" id="numberCard">
+        <div class="card-label">🎯 NUMBER PREDICTION</div>
+        <div class="card-number" id="numPredNumber">—</div>
+        <div class="card-size" id="numPredSize">WAITING</div>
+        <div class="card-status" id="numPredStatus">● INACTIVE</div>
+        <div class="card-mode" id="numPredMode">NUMBER MODE</div>
+        <div class="card-confidence" id="numConfidence">—</div>
+        <div class="prediction-meta" id="numMeta"></div>
+      </div>
+      <div class="pred-card size-card" id="sizeCard">
+        <div class="card-label">📊 SIZE PREDICTION</div>
+        <div class="card-number" id="sizePredNumber">—</div>
+        <div class="card-size" id="sizePredSize">WAITING</div>
+        <div class="card-status" id="sizePredStatus">● INACTIVE</div>
+        <div class="card-mode" id="sizePredMode">SIZE MODE</div>
+        <div class="card-confidence" id="sizeConfidence">—</div>
+        <div class="prediction-meta" id="sizeMeta"></div>
+      </div>
+    </div>
+
+    <div class="history-card fade-in">
+      <div class="history-head">
+        <h4>SESSION LOG</h4>
+        <span id="logCount">WIN 0%</span>
+      </div>
+      <table>
+        <thead><tr><th>PERIOD</th><th>PRED</th><th>RESULT</th><th>STATUS</th></tr></thead>
+        <tbody id="logs">
+          <tr><td colspan="4" class="empty-state">Waiting for first prediction...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="admin-dash fade-in" style="margin-bottom:0;">
+      <div class="dash-title">ADMIN PANEL</div>
+      <div class="admin-actions">
+        <button class="btn btn-gold btn-sm" onclick="generateKey()">⚡ GENERATE & COPY KEY</button>
+        <a href="https://t.me/@fahdii" target="_blank" style="text-decoration:none;"><button class="btn btn-tg btn-sm">✈ JOIN TELEGRAM</button></a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ─── ENHANCED PATTERN PREDICTOR v2.0 ───
+    class EnhancedPatternPredictor {
+      constructor() {
+        this.history = [];
+        this.predictionHistory = [];
+        this.accuracyHistory = [];
+        this.activeMode = 'NUMBER';
+        this.lastResult = null;
+        this.lastPrediction = null;
+        this.numberPred = null;
+        this.sizePred = null;
+        this.trendHistory = [];
+        this.confidenceScore = 0;
+        this.previousPattern = null;
+        this.trendChangeDetected = false;
+        this.changeAlertShown = false;
+        this.trendChangeHistory = [];
+        this.detectedRule = null;
+        
+        // Pattern following state
+        this.detectedPattern = null;
+        this.isLocked = false;
+        this.lockCount = 0;
+        this.missCount = 0;
+        this.patternSequence = [];
+        this.patternIndex = 0;
+        this.last6Pattern = null;
+        this.patternStrength = 0;
+        this.patternHistory = [];
+        
+        // Multiple pattern detection
+        this.patternCandidates = [];
+        this.bestPattern = null;
+        this.adaptiveConfidence = 0;
+        this.streakAnalysis = { big: 0, small: 0, maxBig: 0, maxSmall: 0 };
+      }
+
+      clampNumber(num) {
+        return Math.max(0, Math.min(9, Math.round(num)));
+      }
+
+      // ─── ADVANCED PATTERN DETECTION ───
+      detectAllPatterns(history) {
+        if (history.length < 4) return [];
+        
+        const recent = history.slice(-12).map(n => n >= 5 ? 'B' : 'S');
+        const str = recent.join('');
+        const candidates = [];
+        
+        // 1. AAABBB pattern (3-3 block)
+        if (str.includes('BBBSSS')) {
+          candidates.push({ 
+            pattern: 'AAABBB', 
+            sequence: ['B','B','B','S','S','S'], 
+            nextExpected: 'S',
+            confidence: 90,
+            type: '3-3 block',
+            strength: 95,
+            matchLength: 6
+          });
+        }
+        if (str.includes('SSSBBB')) {
+          candidates.push({ 
+            pattern: 'AAABBB (rev)', 
+            sequence: ['S','S','S','B','B','B'], 
+            nextExpected: 'B',
+            confidence: 90,
+            type: '3-3 block',
+            strength: 95,
+            matchLength: 6
+          });
+        }
+        
+        // 2. AABB pattern (2-2 block repeating)
+        if (str.includes('BBSSBB')) {
+          candidates.push({ 
+            pattern: 'AABB AABB', 
+            sequence: ['B','B','S','S','B','B'], 
+            nextExpected: 'S',
+            confidence: 88,
+            type: '2-2 block repeating',
+            strength: 90,
+            matchLength: 6
+          });
+        }
+        if (str.includes('SSBBSS')) {
+          candidates.push({ 
+            pattern: 'AABB AABB (rev)', 
+            sequence: ['S','S','B','B','S','S'], 
+            nextExpected: 'B',
+            confidence: 88,
+            type: '2-2 block repeating',
+            strength: 90,
+            matchLength: 6
+          });
+        }
+        
+        // 3. ABABAB alternating
+        if (str.includes('BSBSBS')) {
+          candidates.push({ 
+            pattern: 'ABABAB', 
+            sequence: ['B','S','B','S','B','S'], 
+            nextExpected: 'B',
+            confidence: 85,
+            type: 'alternating',
+            strength: 85,
+            matchLength: 6
+          });
+        }
+        if (str.includes('SBSBSB')) {
+          candidates.push({ 
+            pattern: 'ABABAB (rev)', 
+            sequence: ['S','B','S','B','S','B'], 
+            nextExpected: 'S',
+            confidence: 85,
+            type: 'alternating',
+            strength: 85,
+            matchLength: 6
+          });
+        }
+        
+        // 4. ABCABC pattern (3-period cycle)
+        if (str.includes('BBSBBS') || str.includes('SSBSSB')) {
+          candidates.push({ 
+            pattern: 'ABCABC', 
+            sequence: str.slice(0,6).split(''), 
+            nextExpected: str[0],
+            confidence: 82,
+            type: '3-cycle',
+            strength: 80,
+            matchLength: 6
+          });
+        }
+        
+        // 5. Streak patterns
+        const bigStreak = str.match(/B{3,}/g);
+        const smallStreak = str.match(/S{3,}/g);
+        if (bigStreak && bigStreak.length > 0) {
+          const len = bigStreak[0].length;
+          candidates.push({ 
+            pattern: `BIG Streak (${len})`, 
+            sequence: Array(len).fill('B'), 
+            nextExpected: 'B',
+            confidence: 75 + len * 3,
+            type: 'streak',
+            strength: 70 + len * 5,
+            matchLength: len
+          });
+        }
+        if (smallStreak && smallStreak.length > 0) {
+          const len = smallStreak[0].length;
+          candidates.push({ 
+            pattern: `SMALL Streak (${len})`, 
+            sequence: Array(len).fill('S'), 
+            nextExpected: 'S',
+            confidence: 75 + len * 3,
+            type: 'streak',
+            strength: 70 + len * 5,
+            matchLength: len
+          });
+        }
+        
+        // 6. Double streak (AA)
+        if (str.startsWith('BB')) {
+          candidates.push({ 
+            pattern: 'Double BIG', 
+            sequence: ['B','B','B','B'], 
+            nextExpected: 'B',
+            confidence: 72,
+            type: 'double streak',
+            strength: 65,
+            matchLength: 4
+          });
+        }
+        if (str.startsWith('SS')) {
+          candidates.push({ 
+            pattern: 'Double SMALL', 
+            sequence: ['S','S','S','S'], 
+            nextExpected: 'S',
+            confidence: 72,
+            type: 'double streak',
+            strength: 65,
+            matchLength: 4
+          });
+        }
+        
+        // 7. Statistical bias
+        const bigCount = str.split('').filter(c => c === 'B').length;
+        const total = str.length;
+        if (bigCount / total > 0.6) {
+          candidates.push({ 
+            pattern: 'BIG Bias', 
+            sequence: str.slice(0,6).split(''), 
+            nextExpected: 'B',
+            confidence: 65 + (bigCount / total) * 20,
+            type: 'bias',
+            strength: 60,
+            matchLength: 6
+          });
+        } else if (bigCount / total < 0.4) {
+          candidates.push({ 
+            pattern: 'SMALL Bias', 
+            sequence: str.slice(0,6).split(''), 
+            nextExpected: 'S',
+            confidence: 65 + ((total - bigCount) / total) * 20,
+            type: 'bias',
+            strength: 60,
+            matchLength: 6
+          });
+        }
+        
+        // 8. Follow last (default)
+        if (str.length > 0) {
+          const last = str[str.length - 1];
+          candidates.push({ 
+            pattern: 'Follow Last', 
+            sequence: str.slice(-6).split(''), 
+            nextExpected: last,
+            confidence: 55,
+            type: 'follow',
+            strength: 40,
+            matchLength: 1
+          });
+        }
+        
+        return candidates;
+      }
+
+      // ─── SELECT BEST PATTERN ───
+      selectBestPattern(candidates) {
+        if (candidates.length === 0) return null;
+        
+        // Sort by confidence and strength
+        candidates.sort((a, b) => {
+          const scoreA = a.confidence * 0.6 + a.strength * 0.4;
+          const scoreB = b.confidence * 0.6 + b.strength * 0.4;
+          return scoreB - scoreA;
+        });
+        
+        // Return the top candidate
+        return candidates[0];
+      }
+
+      // ─── CHECK IF PATTERN IS BROKEN ───
+      isPatternBroken(history, pattern) {
+        if (!pattern || history.length < 2) return false;
+        
+        const last = history[history.length - 1];
+        const lastSize = last >= 5 ? 'B' : 'S';
+        const expected = pattern.nextExpected;
+        
+        if (lastSize !== expected) {
+          this.missCount++;
+          // Break threshold depends on pattern type
+          const threshold = pattern.type === 'streak' ? 1 : 2;
+          return this.missCount >= threshold;
+        } else {
+          this.missCount = 0;
+          return false;
+        }
+      }
+
+      // ─── UPDATE PATTERN SEQUENCE ───
+      updatePatternSequence(history, pattern) {
+        if (!pattern) return pattern;
+        
+        // Shift sequence and add new value
+        const last = history[history.length - 1];
+        const lastSize = last >= 5 ? 'B' : 'S';
+        
+        // Update sequence
+        const newSeq = [...pattern.sequence];
+        newSeq.shift();
+        newSeq.push(lastSize);
+        
+        // Update next expected based on pattern type
+        let nextExpected = pattern.nextExpected;
+        if (pattern.type === 'alternating') {
+          nextExpected = lastSize === 'B' ? 'S' : 'B';
+        } else if (pattern.type === '3-3 block' || pattern.type === '2-2 block repeating') {
+          // Check if we've completed a block
+          const blockSize = pattern.type === '3-3 block' ? 3 : 2;
+          const recent = newSeq.slice(-blockSize);
+          if (recent.every(c => c === recent[0])) {
+            nextExpected = recent[0] === 'B' ? 'S' : 'B';
+          } else {
+            nextExpected = recent[0];
+          }
+        } else if (pattern.type === 'streak') {
+          nextExpected = lastSize;
+        } else if (pattern.type === 'bias' || pattern.type === 'follow') {
+          // Keep the same bias
+          nextExpected = pattern.nextExpected;
+        }
+        
+        return {
+          ...pattern,
+          sequence: newSeq,
+          nextExpected: nextExpected,
+          // Boost confidence if pattern is holding
+          confidence: Math.min(95, pattern.confidence + 2)
+        };
+      }
+
+      // ─── DETECT STRUCTURAL RULES ───
+      detectStructuralRule(history) {
+        if (history.length < 6) return null;
+        
+        const recent = history.slice(-12).map(n => n >= 5 ? 'A' : 'B');
+        const str = recent.join('');
+        
+        if (str.includes('AAABBB')) {
+          return { id: 3, name: 'AAABBB', desc: 'Triple repeating blocks' };
+        }
+        if (str.includes('AABB')) {
+          return { id: 2, name: 'AABB', desc: 'Double repeating blocks' };
+        }
+        if (str.includes('ABABAB')) {
+          return { id: 1, name: 'AB AB AB', desc: 'Alternating pattern' };
+        }
+        if (recent.filter(c => c === 'A').length >= 6) {
+          return { id: 6, name: 'Long Big Streak', desc: 'Strong big momentum' };
+        }
+        if (recent.filter(c => c === 'B').length >= 6) {
+          return { id: 6, name: 'Long Small Streak', desc: 'Strong small momentum' };
+        }
+        return null;
+      }
+
+      // ─── PREDICT SIZE (ENHANCED) ───
+      predictSize(history) {
+        if (history.length < 3) return 'SMALL';
+        
+        const last = history[history.length - 1];
+        const lastSize = last >= 5 ? 'BIG' : 'SMALL';
+        
+        // ─── ENHANCED PATTERN DETECTION ───
+        const candidates = this.detectAllPatterns(history);
+        const bestPattern = this.selectBestPattern(candidates);
+        this.patternCandidates = candidates;
+        this.bestPattern = bestPattern;
+        
+        // ─── LOCKED PATTERN LOGIC ───
+        if (this.isLocked && this.detectedPattern) {
+          // Check if pattern is broken
+          if (this.isPatternBroken(history, this.detectedPattern)) {
+            this.isLocked = false;
+            this.detectedPattern = null;
+            this.lockCount = 0;
+            this.trendChangeDetected = true;
+          } else {
+            // Pattern still valid - update and follow
+            this.lockCount++;
+            this.detectedPattern = this.updatePatternSequence(history, this.detectedPattern);
+            
+            const expected = this.detectedPattern.nextExpected;
+            const rule = this.detectStructuralRule(history);
+            this.detectedRule = rule;
+            
+            const prediction = expected === 'B' ? 'BIG' : 'SMALL';
+            
+            // Adaptive confidence
+            let baseConf = this.detectedPattern.confidence;
+            let bonus = Math.min(15, this.lockCount * 2);
+            let streakBonus = this.streakAnalysis.maxBig > 3 || this.streakAnalysis.maxSmall > 3 ? 10 : 0;
+            this.confidenceScore = Math.min(97, baseConf + bonus + streakBonus);
+            
+            return prediction;
+          }
+        }
+        
+        // ─── SELECT NEW PATTERN ───
+        if (bestPattern) {
+          this.isLocked = true;
+          this.detectedPattern = bestPattern;
+          this.lockCount = 0;
+          this.missCount = 0;
+          this.trendChangeDetected = false;
+          
+          const expected = bestPattern.nextExpected;
+          const rule = this.detectStructuralRule(history);
+          this.detectedRule = rule;
+          
+          this.confidenceScore = bestPattern.confidence;
+          this.last6Pattern = bestPattern;
+          
+          return expected === 'B' ? 'BIG' : 'SMALL';
+        }
+        
+        // ─── FALLBACK ───
+        const rule = this.detectStructuralRule(history);
+        if (rule) {
+          this.detectedRule = rule;
+          const recent = history.slice(-12).map(n => n >= 5 ? 'A' : 'B');
+          const last6 = recent.slice(-6);
+          const aCount = last6.filter(c => c === 'A').length;
+          const bCount = last6.filter(c => c === 'B').length;
+          
+          if (rule.id === 3) {
+            if (aCount >= 3) return 'SMALL';
+            if (bCount >= 3) return 'BIG';
+            return lastSize === 'BIG' ? 'SMALL' : 'BIG';
+          }
+          if (rule.id === 2) {
+            if (aCount >= 2 && bCount <= 1) return 'SMALL';
+            if (bCount >= 2 && aCount <= 1) return 'BIG';
+          }
+          if (rule.id === 1) {
+            return lastSize === 'BIG' ? 'SMALL' : 'BIG';
+          }
+          if (rule.id === 6) {
+            return lastSize === 'BIG' ? 'BIG' : 'SMALL';
+          }
+        }
+        
+        // Statistical fallback
+        const recentBigs = history.slice(-10).filter(n => n >= 5).length;
+        const recentSmalls = history.slice(-10).filter(n => n < 5).length;
+        this.streakAnalysis = { 
+          big: recentBigs, 
+          small: recentSmalls,
+          maxBig: Math.max(this.streakAnalysis.maxBig, recentBigs),
+          maxSmall: Math.max(this.streakAnalysis.maxSmall, recentSmalls)
+        };
+        
+        if (recentBigs > recentSmalls + 2) {
+          const pred = 'BIG';
+          this.isLocked = true;
+          this.detectedPattern = { pattern: 'BIG Bias', nextExpected: 'B', confidence: 70, type: 'bias', sequence: [] };
+          this.confidenceScore = 70;
+          return pred;
+        }
+        if (recentSmalls > recentBigs + 2) {
+          const pred = 'SMALL';
+          this.isLocked = true;
+          this.detectedPattern = { pattern: 'SMALL Bias', nextExpected: 'S', confidence: 70, type: 'bias', sequence: [] };
+          this.confidenceScore = 70;
+          return pred;
+        }
+        
+        // Default
+        this.detectedRule = null;
+        this.isLocked = false;
+        this.confidenceScore = 50;
+        return lastSize === 'BIG' ? 'SMALL' : 'BIG';
+      }
+
+      // ─── PREDICT NUMBER (ENHANCED) ───
+      predictNumber(history, sizePred) {
+        if (history.length < 3) {
+          return this.clampNumber(Math.floor(Math.random() * 10));
+        }
+        
+        // Use pattern-based number prediction
+        const recent = history.slice(-10);
+        
+        if (sizePred === 'BIG') {
+          const recentBigs = recent.filter(n => n >= 5);
+          if (recentBigs.length > 0) {
+            // Weighted average with recency bias
+            const weighted = recentBigs.map((n, i) => ({ n, w: i + 1 }));
+            const totalWeight = weighted.reduce((s, w) => s + w.w, 0);
+            const avg = weighted.reduce((s, w) => s + w.n * w.w, 0) / totalWeight;
+            const base = Math.round(avg);
+            
+            // Use pattern to predict specific number
+            const range = 2;
+            const minVal = Math.max(5, Math.min(8, base - range));
+            const maxVal = Math.max(6, Math.min(9, base + range));
+            
+            // Check for repeating numbers
+            const lastBigs = recentBigs.slice(-3);
+            if (lastBigs.length === 3 && lastBigs.every(n => n === lastBigs[0])) {
+              // If same number repeated, predict it again
+              const repeat = lastBigs[0];
+              if (repeat >= 5 && repeat <= 9) return repeat;
+            }
+            
+            if (minVal >= maxVal) return this.clampNumber(Math.floor(Math.random() * 5) + 5);
+            return this.clampNumber(Math.floor(Math.random() * (maxVal - minVal + 1)) + minVal);
+          }
+          return this.clampNumber(Math.floor(Math.random() * 5) + 5);
+        }
+        
+        if (sizePred === 'SMALL') {
+          const recentSmalls = recent.filter(n => n < 5);
+          if (recentSmalls.length > 0) {
+            const weighted = recentSmalls.map((n, i) => ({ n, w: i + 1 }));
+            const totalWeight = weighted.reduce((s, w) => s + w.w, 0);
+            const avg = weighted.reduce((s, w) => s + w.n * w.w, 0) / totalWeight;
+            const base = Math.round(avg);
+            
+            const range = 2;
+            const minVal = Math.max(0, Math.min(3, base - range));
+            const maxVal = Math.max(1, Math.min(4, base + range));
+            
+            const lastSmalls = recentSmalls.slice(-3);
+            if (lastSmalls.length === 3 && lastSmalls.every(n => n === lastSmalls[0])) {
+              const repeat = lastSmalls[0];
+              if (repeat >= 0 && repeat <= 4) return repeat;
+            }
+            
+            if (minVal >= maxVal) return this.clampNumber(Math.floor(Math.random() * 5));
+            return this.clampNumber(Math.floor(Math.random() * (maxVal - minVal + 1)) + minVal);
+          }
+          return this.clampNumber(Math.floor(Math.random() * 5));
+        }
+        
+        return this.clampNumber(Math.floor(Math.random() * 10));
+      }
+
+      // ─── MAIN PREDICT ───
+      predict(history) {
+        this.history = history;
+        
+        // Update streak analysis
+        const recent = history.slice(-10);
+        this.streakAnalysis.big = recent.filter(n => n >= 5).length;
+        this.streakAnalysis.small = recent.filter(n => n < 5).length;
+        
+        // Predict size
+        const sizePred = this.predictSize(history);
+        const rule = this.detectedRule;
+        
+        // Predict number
+        const numberPred = this.predictNumber(history, sizePred);
+        
+        this.numberPred = { number: numberPred, size: sizePred };
+        this.sizePred = { number: numberPred, size: sizePred };
+        this.activeMode = 'NUMBER';
+        
+        this.lastPrediction = {
+          active: { number: numberPred, size: sizePred },
+          number: this.numberPred,
+          size: this.sizePred,
+          mode: this.activeMode,
+          confidence: { score: this.confidenceScore, factors: [] },
+          patterns: { 
+            detectedPattern: this.detectedPattern || this.last6Pattern || this.bestPattern,
+            structuralRule: rule,
+            candidates: this.patternCandidates
+          },
+          trend: this.detectedPattern || this.bestPattern,
+          trendChange: this.trendChangeDetected,
+          structuralRule: rule,
+          isLocked: this.isLocked,
+          lockCount: this.lockCount,
+          detectedPattern: this.detectedPattern,
+          patternStrength: this.patternStrength
+        };
+        
+        return this.lastPrediction;
+      }
+
+      updateResult(wasWin, actualNumber) {
+        this.lastResult = wasWin ? 'win' : 'loss';
+        this.accuracyHistory.push(wasWin);
+        if (this.accuracyHistory.length > 100) this.accuracyHistory.shift();
+        
+        if (this.lastPrediction) {
+          this.predictionHistory.push({
+            ...this.lastPrediction,
+            correct: wasWin,
+            actual: actualNumber,
+            mode: this.activeMode,
+            timestamp: Date.now()
+          });
+          if (this.predictionHistory.length > 50) this.predictionHistory.shift();
+        }
+        
+        this.trendHistory.push({
+          number: actualNumber,
+          size: actualNumber >= 5 ? 'BIG' : 'SMALL',
+          win: wasWin
+        });
+        if (this.trendHistory.length > 100) this.trendHistory.shift();
+      }
+
+      getStats() {
+        const total = this.accuracyHistory.length;
+        if (total === 0) return { accuracy: 0, trend: 'unknown', confidence: 0 };
+        
+        const correct = this.accuracyHistory.filter(a => a).length;
+        const accuracy = (correct / total) * 100;
+        
+        const recent = this.accuracyHistory.slice(-10);
+        const recentCorrect = recent.filter(a => a).length;
+        const recentRate = (recentCorrect / Math.max(1, recent.length)) * 100;
+        
+        let trend = 'stable';
+        if (recentRate > accuracy + 10) trend = 'improving';
+        else if (recentRate < accuracy - 10) trend = 'declining';
+        
+        return {
+          accuracy: Math.round(accuracy),
+          recentAccuracy: Math.round(recentRate),
+          trend: trend,
+          confidence: this.confidenceScore || 0,
+          totalPredictions: total,
+          trendChangeCount: this.trendChangeHistory.length,
+          detectedRule: this.detectedRule,
+          detectedPattern: this.detectedPattern,
+          isLocked: this.isLocked,
+          lockCount: this.lockCount,
+          patternCandidates: this.patternCandidates,
+          bestPattern: this.bestPattern,
+          streakAnalysis: this.streakAnalysis
+        };
+      }
+
+      hasTrendChange() {
+        return this.trendChangeDetected;
+      }
+
+      getTrendChangeInfo() {
+        if (this.trendChangeHistory.length === 0) return null;
+        const last = this.trendChangeHistory[this.trendChangeHistory.length - 1];
+        return {
+          from: last.from,
+          to: last.to,
+          timestamp: last.timestamp
+        };
+      }
+
+      resetTrendChangeAlert() {
+        this.changeAlertShown = false;
+      }
+    }
+
+    // ─── INITIALIZE ───
+    const predictor = new EnhancedPatternPredictor();
+    let historicalData = [];
+    let runningPeriod = null;
+    let prediction = null;
+    let predNumber = null;
+    let totalRounds = 0;
+    let wins = 0;
+    let timerInterval, fetchInterval;
+    let lastTrendAlertTime = 0;
+
+    // ─── AUDIO ───
+    function playSound(type) {
+      try {
+        const ctx = new(window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        gain.gain.value = 0.1;
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+
+        if (type === 'win') {
+          osc.frequency.setValueAtTime(880, ctx.currentTime);
+          osc.frequency.linearRampToValueAtTime(1320, ctx.currentTime + 0.1);
+          osc.start(ctx.currentTime);
+          osc.stop(ctx.currentTime + 0.2);
+        } else if (type === 'loss') {
+          osc.frequency.setValueAtTime(400, ctx.currentTime);
+          osc.frequency.linearRampToValueAtTime(280, ctx.currentTime + 0.15);
+          osc.start(ctx.currentTime);
+          osc.stop(ctx.currentTime + 0.2);
+        } else if (type === 'jackpot') {
+          [880, 1100, 1320].forEach((f, i) => {
+            const o2 = ctx.createOscillator();
+            const g2 = ctx.createGain();
+            o2.type = 'sine';
+            o2.frequency.value = f;
+            g2.gain.value = 0.08;
+            g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15 + i * 0.1);
+            o2.connect(g2);
+            g2.connect(ctx.destination);
+            o2.start(ctx.currentTime + i * 0.1);
+            o2.stop(ctx.currentTime + 0.15 + i * 0.1);
+          });
+        } else if (type === 'alert') {
+          [600, 800, 1000, 1200].forEach((f, i) => {
+            const o2 = ctx.createOscillator();
+            const g2 = ctx.createGain();
+            o2.type = 'square';
+            o2.frequency.value = f;
+            g2.gain.value = 0.05;
+            g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08 + i * 0.08);
+            o2.connect(g2);
+            g2.connect(ctx.destination);
+            o2.start(ctx.currentTime + i * 0.08);
+            o2.stop(ctx.currentTime + 0.08 + i * 0.08);
+          });
+        }
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+      } catch (_) {}
+    }
+
+    // ─── PASSWORD ───
+    function checkPw() {
+      const val = document.getElementById('pwInput').value.trim();
+      const err = document.getElementById('pwErr');
+      if (val === 'fahdii') {
+        document.getElementById('pwScreen').style.display = 'none';
+        document.getElementById('countryScreen').style.display = 'flex';
+        err.textContent = '';
+        playSound('win');
+      } else {
+        err.textContent = '✗ INVALID KEY';
+        document.getElementById('pwInput').value = '';
+        document.getElementById('pwInput').classList.add('shake');
+        setTimeout(() => document.getElementById('pwInput').classList.remove('shake'), 400);
+        playSound('loss');
+      }
+    }
+    document.getElementById('pwInput').addEventListener('keydown', e => { if (e.key === 'Enter') checkPw(); });
+
+    // ─── COUNTRY ───
+    function selectCountry(code, flag, name) {
+      document.getElementById('countryScreen').style.display = 'none';
+      document.getElementById('mainApp').style.display = 'block';
+      document.getElementById('hFlag').textContent = flag;
+      document.getElementById('hCountryName').textContent = name;
+      startApp();
+      playSound('win');
+    }
+
+    function goBack() {
+      document.getElementById('mainApp').style.display = 'none';
+      document.getElementById('countryScreen').style.display = 'flex';
+      clearIntervals();
+      playSound('loss');
+    }
+
+    function clearIntervals() {
+      clearInterval(timerInterval);
+      clearInterval(fetchInterval);
+    }
+
+    // ─── TREND CHANGE ALERT ───
+    function showTrendAlert(from, to, confidence, rule, pattern) {
+      const alert = document.getElementById('trendAlert');
+      const content = document.getElementById('alertContent');
+      const sub = document.getElementById('alertSub');
+      
+      let ruleText = rule ? ` · Rule ${rule.id}: ${rule.name}` : '';
+      let patternText = pattern ? ` · Pattern: ${pattern.pattern}` : '';
+      content.textContent = `${from} → ${to}`;
+      sub.textContent = `Confidence: ${Math.round(confidence)}%${ruleText}${patternText}`;
+      
+      alert.classList.add('show');
+      playSound('alert');
+      
+      clearTimeout(window.alertTimeout);
+      window.alertTimeout = setTimeout(() => {
+        alert.classList.remove('show');
+      }, 8000);
+    }
+
+    function closeAlert() {
+      document.getElementById('trendAlert').classList.remove('show');
+    }
+
+    // ─── UPDATE TREND CHART ───
+    function updateTrendChart(patterns, trendChange, rule) {
+      const container = document.getElementById('trendPills');
+      const nameDisplay = document.getElementById('trendName');
+      const confDisplay = document.getElementById('trendConfidence');
+      const indicator = document.getElementById('trendChangeIndicator');
+      const ruleDisplay = document.getElementById('ruleDisplayArea');
+      const ruleMain = document.getElementById('ruleDisplay');
+      const patternDisplay = document.getElementById('patternDisplay');
+      const confidenceFill = document.getElementById('confidenceFill');
+
+      const isLocked = predictor.isLocked;
+      const detectedPattern = predictor.detectedPattern;
+      const lockCount = predictor.lockCount;
+      const confidence = predictor.confidenceScore;
+      
+      if (rule) {
+        ruleDisplay.textContent = `Rule ${rule.id}: ${rule.name} — ${rule.desc}`;
+        ruleMain.textContent = `Rule ${rule.id}`;
+        ruleMain.className = 'dash-value cyan';
+      } else {
+        ruleDisplay.textContent = 'Rule: —';
+        ruleMain.textContent = '—';
+        ruleMain.className = 'dash-value cyan';
+      }
+
+      // Update confidence bar
+      const confLevel = confidence > 75 ? 'high' : confidence > 50 ? 'medium' : 'low';
+      confidenceFill.style.width = `${Math.min(100, confidence)}%`;
+      confidenceFill.className = `fill ${isLocked ? 'locked-fill' : confLevel}`;
+
+      // ─── SHOW LOCKED PATTERN ───
+      if (isLocked && detectedPattern) {
+        const next = detectedPattern.nextExpected === 'B' ? 'BIG' : 'SMALL';
+        const seqStr = detectedPattern.sequence ? detectedPattern.sequence.join(' ') : '';
+        
+        patternDisplay.textContent = `🔒 LOCKED: ${detectedPattern.pattern} · Next: ${next} · ${lockCount} periods following`;
+        patternDisplay.className = 'pattern-display locked-pattern';
+        document.getElementById('patternStatus').textContent = `🔒 ${detectedPattern.pattern}`;
+        document.getElementById('patternStatus').className = 'dash-value pink';
+        
+        // Show sequence with colors
+        let seqHtml = '';
+        if (detectedPattern.sequence && detectedPattern.sequence.length > 0) {
+          seqHtml = detectedPattern.sequence.map((s, i) => {
+            const cls = s === 'B' ? 'active-big' : 'active-small';
+            return `<span class="trend-pill ${cls}">${s}</span>`;
+          }).join('');
+        }
+        
+        container.innerHTML = `
+          <span class="trend-pill locked">🔒 LOCKED</span>
+          ${seqHtml}
+          <span class="trend-pill predicted">→ ${next}</span>
+          <span class="trend-pill pattern-high">${detectedPattern.type}</span>
+          <span class="trend-pill" style="border-color:var(--gold);color:var(--gold);">${Math.round(Math.min(97, detectedPattern.confidence + lockCount * 2))}%</span>
+        `;
+        nameDisplay.textContent = `[LOCKED] ${detectedPattern.pattern}`;
+        confDisplay.textContent = `Confidence: ${Math.round(Math.min(97, detectedPattern.confidence + lockCount * 2))}%`;
+        indicator.textContent = '● FOLLOWING PATTERN';
+        indicator.className = 'trend-change-indicator locked';
+        updateTrendHistory(patterns);
+        return;
+      }
+
+      // ─── SHOW BEST PATTERN ───
+      const bestPattern = predictor.bestPattern;
+      if (bestPattern) {
+        const next = bestPattern.nextExpected === 'B' ? 'BIG' : 'SMALL';
+        const seqStr = bestPattern.sequence ? bestPattern.sequence.join(' ') : '';
+        
+        patternDisplay.textContent = `📊 Best: ${bestPattern.pattern} · Type: ${bestPattern.type} · Next: ${next}`;
+        patternDisplay.className = 'pattern-display';
+        document.getElementById('patternStatus').textContent = `📊 ${bestPattern.pattern}`;
+        document.getElementById('patternStatus').className = 'dash-value pink';
+        
+        let seqHtml = '';
+        if (bestPattern.sequence && bestPattern.sequence.length > 0) {
+          seqHtml = bestPattern.sequence.map((s, i) => {
+            const cls = s === 'B' ? 'active-big' : 'active-small';
+            return `<span class="trend-pill ${cls}">${s}</span>`;
+          }).join('');
+        }
+        
+        container.innerHTML = `
+          <span class="trend-pill structural-rule">BEST</span>
+          ${seqHtml}
+          <span class="trend-pill predicted">→ ${next}</span>
+          <span class="trend-pill pattern-high">${bestPattern.type}</span>
+          <span class="trend-pill" style="border-color:var(--gold);color:var(--gold);">${Math.round(bestPattern.confidence)}%</span>
+        `;
+        nameDisplay.textContent = bestPattern.pattern;
+        confDisplay.textContent = `Confidence: ${Math.round(bestPattern.confidence)}%`;
+        indicator.textContent = trendChange ? '● PATTERN CHANGE!' : '● STABLE';
+        indicator.className = trendChange ? 'trend-change-indicator changing' : 'trend-change-indicator stable';
+        updateTrendHistory(patterns);
+        return;
+      }
+
+      // ─── FALLBACK ───
+      container.innerHTML = `<span class="trend-pill">No clear pattern</span>`;
+      nameDisplay.textContent = 'Random';
+      confDisplay.textContent = 'Confidence: —';
+      indicator.textContent = '● STABLE';
+      indicator.className = 'trend-change-indicator stable';
+      patternDisplay.textContent = 'Pattern: No clear pattern';
+      patternDisplay.className = 'pattern-display';
+      document.getElementById('patternStatus').textContent = '—';
+      document.getElementById('patternStatus').className = 'dash-value pink';
+      updateTrendHistory(patterns);
+    }
+
+    function updateTrendHistory(patterns) {
+      const container = document.getElementById('trendHistory');
+      const history = predictor.trendHistory.slice(-20);
+      
+      if (history.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+
+      let html = '';
+      history.forEach((item, index) => {
+        const cls = item.size === 'BIG' ? 'big' : 'small';
+        const isLocked = predictor.isLocked && index >= history.length - predictor.lockCount;
+        const isPattern = predictor.bestPattern && index >= history.length - 6;
+        html += `<div class="trend-dot ${cls}${isLocked ? ' locked' : ''}${isPattern && !isLocked ? ' pattern' : ''}"></div>`;
+      });
+      
+      const remaining = 20 - history.length;
+      for (let i = 0; i < remaining; i++) {
+        html += `<div class="trend-dot pending"></div>`;
+      }
+      
+      container.innerHTML = html;
+    }
+
+    // ─── UPDATE SPLIT CARDS ───
+    function updateSplitCards(numberPred, sizePred, activeMode, confidence, trendChange) {
+      const numCard = document.getElementById('numPredNumber');
+      const sizeCardNum = document.getElementById('sizePredNumber');
+
+      numCard.textContent = numberPred.number;
+      sizeCardNum.textContent = numberPred.number;
+
+      const isLocked = predictor.isLocked;
+      
+      if (isLocked) {
+        numCard.className = 'card-number locked-number';
+        sizeCardNum.className = 'card-number locked-number';
+      } else if (trendChange) {
+        numCard.className = 'card-number trend-change';
+        sizeCardNum.className = 'card-number trend-change';
+        setTimeout(() => {
+          numCard.className = 'card-number';
+          sizeCardNum.className = 'card-number';
+        }, 600);
+      } else {
+        numCard.className = 'card-number';
+        sizeCardNum.className = 'card-number';
+      }
+
+      const numSizeClass = numberPred.size === 'BIG' ? 'big' : 'small';
+      document.getElementById('numPredSize').textContent = numberPred.size;
+      document.getElementById('numPredSize').className = `card-size ${numSizeClass}${isLocked ? ' locked-size' : ''}`;
+
+      const sizeSizeClass = sizePred.size === 'BIG' ? 'big' : 'small';
+      document.getElementById('sizePredSize').textContent = sizePred.size;
+      document.getElementById('sizePredSize').className = `card-size ${sizeSizeClass}${isLocked ? ' locked-size' : ''}`;
+
+      const numStatus = document.getElementById('numPredStatus');
+      const sizeStatus = document.getElementById('sizePredStatus');
+      const numMode = document.getElementById('numPredMode');
+      const sizeMode = document.getElementById('sizePredMode');
+
+      if (isLocked) {
+        numStatus.textContent = '🔒 LOCKED';
+        numStatus.className = 'card-status locked';
+        sizeStatus.textContent = '🔒 LOCKED';
+        sizeStatus.className = 'card-status locked';
+        numMode.className = 'card-mode locked-mode';
+        sizeMode.className = 'card-mode locked-mode';
+        document.getElementById('numMeta').textContent = `🔒 ${predictor.lockCount} periods following`;
+        document.getElementById('sizeMeta').textContent = `🔒 ${predictor.detectedPattern ? predictor.detectedPattern.type : ''}`;
+      } else if (activeMode === 'NUMBER') {
+        numStatus.textContent = '● ACTIVE';
+        numStatus.className = 'card-status active';
+        sizeStatus.textContent = '● STANDBY';
+        sizeStatus.className = 'card-status inactive';
+        numMode.className = 'card-mode active-mode';
+        sizeMode.className = 'card-mode';
+        document.getElementById('numMeta').textContent = '🎯 Active';
+        document.getElementById('sizeMeta').textContent = '⏳ Standby';
+      } else {
+        sizeStatus.textContent = '● ACTIVE';
+        sizeStatus.className = 'card-status active';
+        numStatus.textContent = '● STANDBY';
+        numStatus.className = 'card-status inactive';
+        sizeMode.className = 'card-mode active-mode';
+        numMode.className = 'card-mode';
+        document.getElementById('numMeta').textContent = '⏳ Standby';
+        document.getElementById('sizeMeta').textContent = '🎯 Active';
+      }
+
+      const numConf = document.getElementById('numConfidence');
+      const sizeConf = document.getElementById('sizeConfidence');
+
+      if (confidence) {
+        const confClass = isLocked ? 'locked-conf' : (confidence.score > 70 ? 'high' : confidence.score > 50 ? 'medium' : 'low');
+        const text = `🎯 ${Math.round(confidence.score)}% confidence`;
+        numConf.textContent = text;
+        numConf.className = 'card-confidence ' + confClass;
+        sizeConf.textContent = text;
+        sizeConf.className = 'card-confidence ' + confClass;
+      }
+    }
+
+    // ─── FETCH DATA ───
+    async function fetchData() {
+      try {
+        const res = await fetch('https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json');
+        const json = await res.json();
+        const last = json.data.list[0];
+        const currentIssue = BigInt(last.issueNumber) + 1n;
+
+        historicalData = json.data.list.slice(0, 30).map(item => item.number);
+
+        if (currentIssue !== runningPeriod) {
+          if (runningPeriod && prediction !== null && predNumber !== null) {
+            const actualSize = last.number >= 5 ? 'BIG' : 'SMALL';
+            let status = 'LOSS';
+            let cls = 'loss';
+            let wasWin = false;
+
+            if (last.number === predNumber) {
+              status = 'JACKPOT';
+              cls = 'jackpot';
+              wins++;
+              wasWin = true;
+              playSound('jackpot');
+            } else if (actualSize === prediction) {
+              status = 'WIN';
+              cls = 'win';
+              wins++;
+              wasWin = true;
+              playSound('win');
+            } else {
+              status = 'LOSS';
+              cls = 'loss';
+              playSound('loss');
+            }
+
+            predictor.updateResult(wasWin, last.number);
+
+            totalRounds++;
+            const logs = document.getElementById('logs');
+            const periodStr = runningPeriod.toString();
+
+            if (logs.querySelector('.empty-state')) logs.innerHTML = '';
+
+            const trendChange = predictor.hasTrendChange();
+            const isLocked = predictor.isLocked;
+            const rowClass = trendChange ? 'trend-change-row' : (isLocked ? 'locked-row' : '');
+
+            const lockIcon = isLocked ? ' 🔒' : '';
+            const patternIcon = predictor.bestPattern ? ` 📊${predictor.bestPattern.type}` : '';
+
+            logs.innerHTML = `
+              <tr class="${rowClass}">
+                <td style="color:#4a5a7a">...${periodStr.slice(-4)}</td>
+                <td>${prediction} (${predNumber})${lockIcon}${patternIcon}</td>
+                <td style="font-family:Orbitron,monospace">${last.number}</td>
+                <td class="${cls}">${status}${trendChange ? ' 🔄' : ''}</td>
+              </tr>` + logs.innerHTML;
+
+            const stats = predictor.getStats();
+            const winPercent = totalRounds > 0 ? Math.round((wins / totalRounds) * 100) : 0;
+            document.getElementById('logCount').textContent = `WIN ${winPercent}% | ACC ${stats.accuracy}%`;
+            document.getElementById('winRate').textContent = `${winPercent}%`;
+
+            if (trendChange && !predictor.isLocked) {
+              const changeInfo = predictor.getTrendChangeInfo();
+              if (changeInfo && Date.now() - lastTrendAlertTime > 30000) {
+                const rule = stats.detectedRule;
+                const pattern = stats.detectedPattern || stats.bestPattern;
+                showTrendAlert(
+                  changeInfo.from || 'Unknown',
+                  changeInfo.to || 'Unknown',
+                  predictor.confidenceScore || 70,
+                  rule,
+                  pattern
+                );
+                lastTrendAlertTime = Date.now();
+                predictor.trendChangeDetected = false;
+              }
+            }
+          }
+
+          // ─── PREDICT ───
+          const result = predictor.predict(historicalData);
+
+          prediction = result.active.size;
+          predNumber = result.active.number;
+          const mode = result.mode;
+          const trendChange = result.trendChange;
+          const rule = result.structuralRule;
+          const isLocked = result.isLocked;
+
+          // Update split cards
+          updateSplitCards(result.number, result.size, mode, result.confidence, trendChange);
+
+          // Update trend chart
+          updateTrendChart(result.patterns, trendChange, rule);
+
+          // Update main UI
+          document.getElementById('modeDisplay').textContent = mode + (isLocked ? ' 🔒' : '');
+          if (rule) {
+            document.getElementById('ruleDisplay').textContent = `Rule ${rule.id}`;
+          }
+
+          // Update size pills
+          const pb = document.getElementById('pillBig');
+          const ps = document.getElementById('pillSmall');
+          pb.className = 'size-pill big' + (prediction === 'BIG' ? ' active' : '') + (isLocked ? ' locked' : '');
+          ps.className = 'size-pill small' + (prediction === 'SMALL' ? ' active' : '') + (isLocked ? ' locked' : '');
+
+          runningPeriod = currentIssue;
+
+          setTimeout(() => generateKeySilent(), 1000);
+        }
+
+        document.getElementById('periodDisplay').textContent = '...' + runningPeriod.toString().slice(-6);
+
+      } catch (e) { /* silent */ }
+    }
+
+    // ─── GENERATE KEY ───
+    function generateKey() {
+      const key = generateKeyString();
+      navigator.clipboard.writeText(key).then(() => {
+        alert('✅ KEY COPIED:\n' + key);
+        playSound('win');
+      }).catch(() => {
+        alert('KEY: ' + key);
+        playSound('loss');
+      });
+    }
+
+    function generateKeyString() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let key = 'PA-';
+      for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) key += chars[Math.floor(Math.random() * chars.length)];
+        if (i < 3) key += '-';
+      }
+      return key;
+    }
+
+    function generateKeySilent() {
+      const key = generateKeyString();
+      navigator.clipboard.writeText(key).catch(() => {});
+    }
+
+    // ─── START APP ───
+    function startApp() {
+      timerInterval = setInterval(() => {
+        const sec = new Date().getSeconds();
+        const remain = 60 - sec;
+        document.getElementById('timerDisplay').textContent = '00:' + String(remain).padStart(2, '0');
+      }, 1000);
+      fetchInterval = setInterval(fetchData, 3000);
+      fetchData();
+    }
+
+    // ─── INIT ───
+    document.getElementById('pwScreen').style.display = 'flex';
+    document.getElementById('countryScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'none';
+  </script>
+</body>
+</html>
